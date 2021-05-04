@@ -8,13 +8,15 @@ get_elemnt_from_matrix:
         movq %rsp, %rbp
         
         xorq %rax, %rax
-        movq %rsi, %eax
-        mulq %edx # finding n*row
+        movl %esi, %eax
+        mull %edx # finding n*row
         shlq $32, %rdx #putting the resulut in rdx
         addq %rax, %rdx
         
         leaq (%rdi, %rdx, 4), %rdi #finding the right row
-        movq (%rdi, %ecx, 4), %eax 
+        shlq $32, %rcx
+        shrq $32, %rcx
+        movl (%rdi, %rcx, 4), %eax 
         
         leave
 	ret
