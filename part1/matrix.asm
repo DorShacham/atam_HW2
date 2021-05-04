@@ -24,3 +24,18 @@ get_elemnt_from_matrix:
 multiplyMatrices:
 	#TODO: STUDENTS NEED TO FILL
 	ret
+
+mult_modolo_p: # int mult_modolo_p(int a, int b, unsigned int p) {return (a*b)%p;}
+    pushq %rbp #prolog -it is not realy needed here...
+    movq %rsp, %rbp
+    
+    xorq %rax, %rax
+    movl %edx, %ecx # moving p because we gona mult soon..
+    movl %edi, %eax #eax = a
+    mull %esi #EDX:EAX = a*b
+    divl %ecx
+    movl %edx, %eax 
+      
+    
+    leave
+    ret
