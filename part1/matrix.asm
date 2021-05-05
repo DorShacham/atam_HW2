@@ -23,8 +23,11 @@ get_elemnt_from_matrix:
 
 multiplyMatrices:
 	#TODO: STUDENTS NEED TO FILL
-        pushq %rbp #prolog -it is not realy needed here...
+        pushq %rbp 
         movq %rsp, %rbp
+        pushq %rbx
+        pushq %r12
+        pushq %r13
         
         sub $36, %rsp #open frame and save parametres
         movl %r9d, 32(%rsp) #r 
@@ -32,7 +35,7 @@ multiplyMatrices:
         movl %ecx, 24(%rsp) #m
         movq %rdx, 16(%rsp) # *result
         movq %rsi,  8(%rsp) # *second
-        movq %rdi ,  (%rsp) #  *first 
+        movq %rdi,   (%rsp) #  *first 
         
         xorl %r12d, %r12d # row_counter
        row_loop: 
@@ -60,7 +63,7 @@ multiplyMatrices:
         popq %rbx # to get p out of the stack so our parmters will not move
         # eax = vec_mul[row][col]
         
-        #getting ready to call vec_mul
+        #getting ready to call set function
         movq 16(%rsp), %rdi #  *matrix 
         movl 32(%rsp), %esi # num_of_colms
         movl %r12d, %edx # row
@@ -79,7 +82,10 @@ multiplyMatrices:
         
         
        end_of_row_loop:
-        addq $36, %rsp #this was not needed
+        addq $36, %rsp 
+        popq %r13
+        popq %r12
+        popq %rbx
         leave
         ret
 
@@ -103,9 +109,12 @@ mult_modolo_p: # int mult_modolo_p(int a, int b, unsigned int p) {return (a*b)%p
 vec_mult: 
     pushq %rbp 
     movq %rsp, %rbp
+    pushq %rbx
+    pushq %r12
+    pushq %r13
     
     xorl %r13d, %r13d # r13d = sum 
-    xorl %r12d, %r12d # r12d = n2, this will be the iterator
+    xorl %r12d, %r12d #  this will be the iterator
     movl 16(%rbp), %eax # getting p
     
     #saving the parameters
@@ -119,7 +128,7 @@ vec_mult:
     movq %rdi ,  (%rsp)#*first //rsp
     
    loop:
-    cmpl %r12d, %r8d # i < n2
+    cmpl %r12d, 8(%rsp) # i < n1
     jle finish
     movq (%rsp), %rdi
     movl 8(%rsp), %esi
@@ -128,16 +137,16 @@ vec_mult:
     call get_elemnt_from_matrix
     movl %eax, %ebx
     
-    jle finish
+ #   jle finish
     movq 16(%rsp), %rdi
     movl 24(%rsp), %esi
     movl %r12d, %edx 
     movl 28(%rsp), %ecx
     call get_elemnt_from_matrix
     
-    movl %eax, %edi 
-    movl %ebx, %esi
-    movl 32(%rsp), %edx
+    movl %eax, %edi # a
+    movl %ebx, %esi # b
+    movl 32(%rsp), %edx # p
     call mult_modolo_p # eax = (first[row][i]*second[i][col])%p
     
     addl %r13d, %eax
@@ -149,7 +158,10 @@ vec_mult:
     
    finish:
     movl %r13d, %eax
-    addq $36, %rsp #this was not needed
+    addq $36, %rsp 
+    popq %r13
+    popq %r12
+    popq %rbx
     leave
     ret
     
