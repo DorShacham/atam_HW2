@@ -9,7 +9,7 @@ get_elemnt_from_matrix:
         
         xorq %rax, %rax
         movl %esi, %eax
-        mull %edx # finding n*row
+        imull %edx # finding n*row
         shlq $32, %rdx #putting the resulut in rdx
         addq %rax, %rdx
         
@@ -97,7 +97,7 @@ mult_modolo_p: # int mult_modolo_p(int a, int b, unsigned int p) {return (a*b)%p
     movl %edx, %ecx # moving p because we gona mult soon..
     movl %edi, %eax #eax = a
     mull %esi #EDX:EAX = a*b
-    divl %ecx
+    idivl %ecx
     movl %edx, %eax 
       
     
@@ -151,7 +151,7 @@ vec_mult:
     
     addl %r13d, %eax
     xorl %edx,%edx
-    divl 32(%rsp) 
+    idivl 32(%rsp) 
     movl %edx, %r13d # sum += eas%p
     inc %r12d
     jmp loop
