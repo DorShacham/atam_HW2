@@ -23,7 +23,65 @@ get_elemnt_from_matrix:
 
 multiplyMatrices:
 	#TODO: STUDENTS NEED TO FILL
-	ret
+        pushq %rbp #prolog -it is not realy needed here...
+        movq %rsp, %rbp
+        
+        sub $36, %rsp #open frame and save parametres
+        movl %r9d, 32(%rsp) #r 
+        movl %r8d, 28(%rsp) #n
+        movl %ecx, 24(%rsp) #m
+        movq %rdx, 16(%rsp) # *result
+        movq %rsi,  8(%rsp) # *second
+        movq %rdi ,  (%rsp) #  *first 
+        
+        xorl %r12d, %r12d # row_counter
+       row_loop: 
+        cmpl %r12d, 24(%rsp) # for(row_counter = 0; row_conter < m; row_counter++)
+        jle end_of_row_loop
+        xorl %r13d, %r13d # col_counter
+        
+       col_loop:
+        cmpl %r13d, 32(%rsp)  # for(col_counter = 0; col_conter < r; col_counter++)
+        jle end_of_col_loop
+        
+        #getting ready to call vec_mul
+        movq (%rsp), %rdi #  *first 
+        movl 28(%rsp), %esi #n1
+        movl %r12d, %edx # row
+        movq 8(%rsp), %rcx # *second
+        movl 32(%rsp), %r8d # n2
+        movl %r13d, %r9d # col
+        
+        xorq %rax, %rax
+        movl 16(%rbp), %eax
+        pushq %rax # putting p on the stack
+        
+        call vec_mult
+        popq %rbx # to get p out of the stack so our parmters will not move
+        # eax = vec_mul[row][col]
+        
+        #getting ready to call vec_mul
+        movq 16(%rsp), %rdi #  *matrix 
+        movl 32(%rsp), %esi # num_of_colms
+        movl %r12d, %edx # row
+        movl %r13d, %ecx # col
+        movl %eax, %r8d # value
+        
+        call set_elemnt_in_matrix
+        
+        incl %r13d
+        jmp col_loop
+        
+       end_of_col_loop:
+        incl %r12d
+        jmp row_loop
+        
+        
+        
+       end_of_row_loop:
+        addq $36, %rsp #this was not needed
+        leave
+        ret
 
 mult_modolo_p: # int mult_modolo_p(int a, int b, unsigned int p) {return (a*b)%p;}
     pushq %rbp #prolog -it is not realy needed here...
@@ -51,7 +109,7 @@ vec_mult:
     movl 16(%rbp), %eax # getting p
     
     #saving the parameters
-    subq $32, %rsp
+    subq $36, %rsp
     movl %eax, 32(%rsp) #p //rsp+32
     movl %r9d, 28(%rsp) #col //rsp+28
     movl %r8d, 24(%rsp) #n2 //rsp+24
@@ -91,6 +149,7 @@ vec_mult:
     
    finish:
     movl %r13d, %eax
+    addq $36, %rsp #this was not needed
     leave
     ret
     
