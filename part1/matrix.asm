@@ -96,7 +96,7 @@ mult_modolo_p: # int mult_modolo_p(int a, int b, unsigned int p) {return (a*b)%p
     xorq %rax, %rax
     movl %edx, %ecx # moving p because we gona mult soon..
     movl %edi, %eax #eax = a
-    mull %esi #EDX:EAX = a*b
+    imull %esi #EDX:EAX = a*b
     idivl %ecx
     movl %edx, %eax 
       
