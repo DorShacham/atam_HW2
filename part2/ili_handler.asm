@@ -20,8 +20,8 @@ continue:
 
 my_handler:
        popq %rdi # need to know if to move 1 or 2 bytes
-       addq %rdi, (%rsp)
-       popq %rsi
+       popq %rsi #restore backup
+       addq %rdi, (%rsp) # rip <- rip + inst_len
        movl %eax, %edi
 
   iretq
