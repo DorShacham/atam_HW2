@@ -4,7 +4,7 @@
 .align 4, 0x90
 my_ili_handler:
   ####### Some smart student's code here #######
-      pushq %rbp #prolog for backup
+      pushq %rbp #prolog for backup - we dont know what what_to_do will change
       movq %rsp, %rbp
       pushq %rdi
       pushq %rax
@@ -16,7 +16,23 @@ my_ili_handler:
       pushq $1 # the opcoed is 1 byte
       movb (%rsi), %dil # put the last byte of the instruction in rdi
 continue:  
+      pushq %rdx
+      pushq %rcx
+      pushq %r8
+      pushq %r9
+      pushq %r10
+      pushq %r11
+       
        call what_to_do
+       
+      popq %r11
+      popq %r10
+      popq %r9
+      popq %r8
+      popq %rcx
+      popq %rdx
+       
+       
        cmpl $0, %eax
        jne my_handler
        popq %rsi #to get 1/2 out of the stack
