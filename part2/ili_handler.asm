@@ -15,16 +15,33 @@ my_ili_handler:
   addq $1, %rax
 cont:
   # pass last byte of invalid op 
-  movzx (%rax), %edi
+  movb (%rax), %dil
+
+  pushq %rdi
+  pushq %rsi
+  pushq %rdx
+  pushq %rcx
+  pushq %r8
+  pushq %r9
+  pushq %r10
+  pushq %r11
 
   call what_to_do
+
+  popq %r11
+  popq %r10
+  popq %r9
+  popq %r8
+  popq %rcx
+  popq %rdx
+  popq %rsi
+  popq %rdi
+
   test %eax, %eax
   je orig
   # store code in edi & next instruction in rip
   movl %eax, %edi
-  movq 8(%rsp), %rax
-  addq $1, %rax
-  movq %rax, 8(%rsp)
+  incq 8(%rsp)
   # keep reg state
   pop %rax
 
